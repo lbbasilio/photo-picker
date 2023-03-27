@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "photo-picker", "photo-picker.csproj", "{FDB068A2-2B9B-4350-BFA7-12B3AF3A7663}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDB068A2-2B9B-4350-BFA7-12B3AF3A7663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDB068A2-2B9B-4350-BFA7-12B3AF3A7663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDB068A2-2B9B-4350-BFA7-12B3AF3A7663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDB068A2-2B9B-4350-BFA7-12B3AF3A7663}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F411DB3D-1104-4827-A274-994D8795C79E}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "photo-picker": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
