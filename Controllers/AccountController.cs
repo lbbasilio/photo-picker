@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using PhotoPicker.Infrastructure;
 using PhotoPicker.Entities;
 using Microsoft.EntityFrameworkCore;
+using PhotoPicker.Infrastructure.Database;
+using PhotoPicker.Infrastructure.Http;
 
 namespace PhotoPicker.Controllers
 {

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using PhotoPicker.Infrastructure;
 using PhotoPicker.Entities;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using PhotoPicker.Infrastructure.Database;
+using PhotoPicker.Infrastructure.Http;
 
 namespace PhotoPicker.Controllers
 {
