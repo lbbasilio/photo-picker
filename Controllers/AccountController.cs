@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using PhotoPicker.Infrastructure;
+using PhotoPicker.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace PhotoPicker.Controllers
 {
@@ -11,6 +15,9 @@ namespace PhotoPicker.Controllers
     [Route("account")]
     public class AccountController : BaseController
     {
+        private readonly DataContext _dataContext;
+        public AccountController(DataContext dataContext) {  _dataContext = dataContext; }
+
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -22,14 +29,32 @@ namespace PhotoPicker.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
+            var user = await _dataContext.Set<User>()
+                                         .Where(x => x.Email == req.Email)
+                                         .FirstOrDefaultAsync();
+
+            // User does not exist
+            if (user is null) 
+                return BadRequest("Invalid email or password.");
+
+            // Verify password
+            var hasher = new PasswordHasher<User>();
+            if (hasher.VerifyHashedPassword(user, user.HashedPassword, req.Password) == PasswordVerificationResult.Failed)
+                return BadRequest("Invalid email or password.");
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, req.Email!),
-                new Claim(ClaimTypes.Role, "User")
+                new Claim("Id", user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
+            user.LastLogin = DateTime.Now;
+            await _dataContext.SaveChangesAsync();
+            
             return Ok();
         }
     }
