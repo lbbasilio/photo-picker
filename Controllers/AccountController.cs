@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Net.Mail;
 using PhotoPicker.Entities;
-using Microsoft.EntityFrameworkCore;
 using PhotoPicker.Infrastructure.Database;
 using PhotoPicker.Infrastructure.Http;
 
@@ -72,13 +73,71 @@ namespace PhotoPicker.Controllers
                 return HandleException(ex);
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost("signup")]
+        public async Task<IActionResult> Singup([FromBody] SignupRequest req)
+        {
+            try
+            {
+                // Validate email
+                try
+                {
+                    _ = new MailAddress(req.Email);
+                }
+                catch
+                {
+                    return BadRequest("Invalid email.");
+                }
+
+                // Check if email is unique
+                if (await _dataContext.Set<User>().Where(x => x.Email == req.Email).CountAsync() > 0)
+                    return BadRequest("Email already in use.");
+
+                // Create new user
+                var hasher = new PasswordHasher<User>();
+                var user = new User
+                {
+                    Name = req.Name,
+                    Email = req.Email,
+                    HashedPassword = hasher.HashPassword(new(), req.Password),
+                    Role = req.Role
+                };
+
+                // Save to DB
+                await _dataContext.AddAsync(user);
+                await _dataContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
+        }
     }
 
+    #region Controller DTOs
+    #pragma warning disable CS8618 // Suppress "Non-nullable field must contain a non-null value when exiting constructor." warning
     public class LoginRequest
     {
         [Required]
-        public string? Email { get; set; }
+        public string Email { get; set; }
         [Required]
-        public string? Password { get; set; }
+        public string Password { get; set; }
     }
+
+    public class SignupRequest
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Password { get; set; }
+        [Required]
+        public UserRole Role { get; set; } 
+    }
+    #pragma warning restore CS8618
+    #endregion
 }
