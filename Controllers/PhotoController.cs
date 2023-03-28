@@ -45,7 +45,7 @@ namespace PhotoPicker.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return HandleException(ex);
             }
         }
 
@@ -80,7 +80,7 @@ namespace PhotoPicker.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return HandleException(ex);
             }
         }
     }

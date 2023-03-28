@@ -22,41 +22,55 @@ namespace PhotoPicker.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            return Ok();
+            try
+            {
+                await HttpContext.SignOutAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
-            var user = await _dataContext.Set<User>()
-                                         .Where(x => x.Email == req.Email)
-                                         .FirstOrDefaultAsync();
+            try
+            {
+                var user = await _dataContext.Set<User>()
+                             .Where(x => x.Email == req.Email)
+                             .FirstOrDefaultAsync();
 
-            // User does not exist
-            if (user is null) 
-                return BadRequest("Invalid email or password.");
+                // User does not exist
+                if (user is null)
+                    return BadRequest("Invalid email or password.");
 
-            // Verify password
-            var hasher = new PasswordHasher<User>();
-            if (hasher.VerifyHashedPassword(user, user.HashedPassword, req.Password) == PasswordVerificationResult.Failed)
-                return BadRequest("Invalid email or password.");
+                // Verify password
+                var hasher = new PasswordHasher<User>();
+                if (hasher.VerifyHashedPassword(user, user.HashedPassword, req.Password) == PasswordVerificationResult.Failed)
+                    return BadRequest("Invalid email or password.");
 
-            var claims = new List<Claim>
+                var claims = new List<Claim>
             {
                 new Claim("Id", user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
-            user.LastLogin = DateTime.Now;
-            await _dataContext.SaveChangesAsync();
-            
-            return Ok();
+                user.LastLogin = DateTime.Now;
+                await _dataContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return HandleException(ex);
+            }
         }
     }
 

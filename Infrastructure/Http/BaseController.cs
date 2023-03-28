@@ -13,8 +13,17 @@ namespace PhotoPicker.Infrastructure.Http
         }
 
         protected string GetClaim(string claimType) => HttpContext.User.Claims.Where(x => x.Type == claimType).First().Value;
+        protected ServerErrorResult ServerError() => new ServerErrorResult();
+        protected ServerErrorObjectResult ServerError(object? value) => new ServerErrorObjectResult(value);
+        protected ServerErrorObjectResult HandleException(Exception ex)
+        {
 
-        protected ServerErrorResult InternalServerError() => new ServerErrorResult();
-        protected ServerErrorObjectResult InternalServerError(object? value) => new ServerErrorObjectResult(value);
+            var message = $"{ex.Message} - {ex.StackTrace}";
+            if (ex.InnerException is not null)
+                message += $"\n#####\n{ex.InnerException.Message} - {ex.InnerException.StackTrace}";
+            
+            Console.WriteLine(message);
+            return ServerError(message);
+        }
     }
 }
