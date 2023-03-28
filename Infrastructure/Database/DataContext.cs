@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PhotoPicker.Entities;
 
-namespace PhotoPicker.Infrastructure
+namespace PhotoPicker.Infrastructure.Database
 {
     public class DataContext : DbContext
     {
