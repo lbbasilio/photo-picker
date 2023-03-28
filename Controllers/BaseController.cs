@@ -11,5 +11,7 @@ namespace PhotoPicker.Controllers
                 context.Result = new BadRequestObjectResult(ModelState);
             base.OnActionExecuting(context);
         }
+
+        protected string GetClaim(string claimType) => HttpContext.User.Claims.Where(x => x.Type == claimType).First().Value;
     }
 }

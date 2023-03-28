@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using PhotoPicker.Infrastructure;
 
 namespace PhotoPicker
 {
-    // TODO: authentication & authorization
+    // TODO: authentication & authorization WITH PASSWORD!
+    // TODO: fix photo not saving the byte array into DB
     // TODO: DB layer, with EF Core
-    // TODO: create user & photo objects
     public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, world!");
             var builder = WebApplication.CreateBuilder(args);
 
             // Logging
@@ -35,6 +36,11 @@ namespace PhotoPicker
                 options.DefaultPolicy = options.GetPolicy("Authenticated")!;
             });
 
+            // Add DB Context
+            builder.Services.AddDbContextPool<DataContext>(
+                options => options.UseMySQL("Server=localhost;Database=photopicker;Uid=root;Pwd=root")
+            );
+
             var app = builder.Build();
 
             app.UseRouting();
@@ -43,15 +49,6 @@ namespace PhotoPicker
             app.UseEndpoints(endpoints => endpoints.MapControllers());
 
             app.Run("http://0.0.0.0:80");
-
-            /*Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://0.0.0.0:80");
-                    webBuilder.UseKestrel();
-                });*/
-
         }
     }
 }
