@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using PhotoPicker.Infrastructure;
+using PhotoPicker.Infrastructure.Database;
 
 namespace PhotoPicker
 {
-    // TODO: authentication & authorization WITH PASSWORD!
-    // TODO: fix photo not saving the byte array into DB
-    // TODO: DB layer, with EF Core
+    // TODO: Test user creation/login
+    // TODO: Upload photos to S3
+    // TODO: Face processing
     public class Program
     {
         static void Main(string[] args)
